@@ -1,0 +1,32 @@
+@import "../../../less/variables";
+
+.cockpit-container {
+  border: 1px solid @cockpit-color-rgb;
+  position: relative;
+  .cockpit-container-content {
+    background: rgba(4, 8, 17, 1);
+    box-shadow: 0 3px 10px 0 @cockpit-color-rgb inset;
+    border-radius: 7px;
+    margin: 8px;
+    height: calc(~"100% - 15px");
+    position: relative;
+  }
+  .border-tl {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 16px;
+    height: 16px;
+    border-left: 2px solid @cockpit-color;
+    border-top: 2px solid @cockpit-color;
+  }
+  .border-br {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    border-right: 2px solid @cockpit-color;
+    border-bottom: 2px solid @cockpit-color;
+  }
+}

@@ -1,0 +1,243 @@
+@import "../../less/variables";
+
+.myHeader{
+  z-index: 100;
+  border: none;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.4);
+  box-shadow: 0 5px 10px rgba(0,0,0,.4);
+  position: relative;
+  //background: url('../../assets/first/desktop_default.jpg') no-repeat 0 0;
+  background-size: 100% auto;
+  height: @header;
+  line-height: @header;
+  padding: 0 !important;
+  .title {
+    font-size:22px;
+    font-family: 宋体;
+    font-weight: 600;
+    padding-left: 10px;
+    color: #FFF;
+  }
+  .loginOut{
+    position: absolute;
+    right: 20px;
+    top: 0px;
+    span{
+      color: #FFF;
+      padding-right: 20px;
+    }
+  }
+}
+.content {
+  width: 100%;
+  height: calc(~'100vh - @{header}');
+  position: relative;
+  padding: 10px 20px 10px 10px;
+  //background: url("../../assets/first/desktop_default.jpg") no-repeat 0 0;
+  -webkit-background-size: 100% 100%;
+  background-size: 100% 100%;
+  //overflow-y: auto;
+}
+.content::-webkit-scrollbar,.small::-webkit-scrollbar {
+  width: 4px;
+  /*height: 4px;*/
+}
+.content::-webkit-scrollbar-thumb, .small::-webkit-scrollbar-thumb{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 5px RGBA(38, 45, 49, 0.5);
+  background:#262D31;
+}
+.content::-webkit-scrollbar-track,.small::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  border-radius: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+:global {
+  .ant-layout-header {
+    padding: 0 0 0 30px;
+  }
+}
+
+.header {
+  background-color: #fff;
+  box-shadow: 0 0 8px 2px rgba(138, 138, 138, 0.5);
+  height: @header;
+  line-height: @header;
+  z-index: 11;
+  .font {
+    color: #FFFFFF;
+    font-size: 20px;
+    font-family: FZZZHONGJW--GB1-0;
+  }
+  .trigger {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    box-shadow: 0px 2px 8px rgba(165, 187, 224, 1);
+    text-align: center;
+    line-height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.enterCockpit {
+  cursor: pointer;
+  span {
+    display: inline-block;
+    position: absolute;
+    right: 100px;
+    color: #333333;
+    font-size: 12px;
+  }
+  i {
+    display: inline-block;
+    position: absolute;
+    right: 150px;
+    font-size: 13px;
+    color: #ffffff;
+  }
+}
+
+.message{
+  float:right;
+  margin-right: 30px;
+  position: relative;
+  i{
+    font-size: 20px;
+    vertical-align: -5px;
+    display: inline-block;
+    width: 25px;
+  }
+  .list{
+    position: absolute;
+    top:40px;
+    right: 10px;
+    background-color: white;
+    border: 1px solid #e8e8e8 !important;
+    border-radius: 10px;
+    .close{
+      float: right;
+      margin-top: 5px;
+      cursor: pointer;
+    }
+    .dot{
+      display: inline-block;
+      width:7px;
+      height:7px;
+      background: red;
+      padding:0;
+      border-radius: 7px;
+      margin-top: 7px;
+    }
+  }
+  :global{
+    .ant-list{
+      background-color: #fff;
+      width: 450px;
+      border-bottom:  1px solid #e8e8e8;
+      z-index: 100;
+    }
+    .ant-spin-container{
+      margin: 15px 15px;
+    }
+    .ant-list-header{
+      padding:5px 10px;
+      background: #C8EEE9;
+      i{
+        vertical-align: -2px;
+      }
+    }
+    .ant-list-item{
+      padding: 5px 10px;
+      border-bottom:0;
+      cursor: pointer;
+      span{
+        padding-left: 5px;
+      }
+    }
+  }
+}
+
+.login{
+  cursor: pointer;
+  float: right;
+  color: #333333;
+  margin-right: 40px;
+  font-size: 14px;
+  :global{
+    i{
+      margin-right: 5px !important;
+    }
+  }
+}
+ul.dropdown{
+  :global{
+    div i.anticon{
+      margin-right: 5px !important;
+    }
+  }
+}
+
+.sider {
+  max-height: calc(~'100vh - @{header} - 48px');
+  background: #111615;
+  :global {
+    .ant-menu-dark {
+      background: #111615;
+      .ant-menu-item > a{
+        color: #FFF;
+      }
+      // 第二级
+      .ant-menu-sub .ant-menu-item,
+      .ant-menu-sub .ant-menu-submenu-inline{
+        background-color: #191f1e;
+      }
+      // 第三级
+      .ant-menu-sub .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item{
+        background-color: #070a09;
+      }
+
+      .ant-menu-item,
+      .ant-menu-submenu{
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .ant-menu-item-selected,
+        .ant-menu-sub .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-selected{
+          background-color: #000000;
+        }
+      }
+      .ant-menu-item{
+        height: 48px;
+        line-height: 48px;
+        margin: 0;
+      }
+      .ant-menu-item-selected{
+        background-color: #0a1110;
+        a, span{
+          color: @base-bg;
+        }
+      }
+      .ant-menu-item-selected > a:before{
+        background: @base-bg;
+        width: 4px;
+      }
+    }
+    .ant-menu-inline {
+      .ant-menu-item{
+        margin: 0;
+      }
+      .ant-menu-submenu-title{
+        margin: 0;
+        height: 47px;
+        line-height: 47px;
+        a{
+          color: #FFF;
+        }
+      }
+    }
+    .ant-layout-sider-trigger{
+      background: #111615;
+    }
+  }
+}

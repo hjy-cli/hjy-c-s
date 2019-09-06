@@ -1,0 +1,92 @@
+@import "../../../less/variables";
+.base {
+  min-height: @filtrate-h;
+  padding-top: 4px;
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border: @base-border;
+  border-radius: @base-radius;
+  //box-shadow: @base-shadow;
+  :global {
+    .ant-input:hover {
+      border-color: @base-bg;
+    }
+    .ant-input:focus {
+      border-color: @base-bg;
+      box-shadow: @base-shadow;
+    }
+    .ant-radio-checked .ant-radio-inner{
+      border-color: @base-border;
+    }
+    .ant-radio-inner::after{
+      background: @base-bg;
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner{
+      border-color: @base-border;
+      background: @base-bg;
+    }
+
+    .ant-calendar-picker-input.ant-input {
+      width: 100%;
+    }
+    .ant-select, .ant-input {
+      width: 140px;
+    }
+    .ant-row {
+      margin-left: 16px;
+    }
+    .ant-form-item {
+      margin-right: 0
+    }
+    .ant-form-item-label {
+      //min-width: 100px;
+    }
+    .longSelect .ant-select{
+      width: 100%;
+      min-width: 140px;
+      max-width: 600px;
+    }
+  }
+}
+.hashUnderBtn {
+  height: 87px;
+}
+.underBtn {
+  color: rgba(0, 0, 0, 0.85);
+}
+.button, .button:focus, .button:hover {
+  border-color: #36adb3;
+  height: 24px;
+  margin-left: 10px;
+  background: -webkit-linear-gradient(#00A1FF, #00A1FF); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(#00A1FF, #00A1FF); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(#00A1FF, #00A1FF); /* Firefox 3.6 - 15 */
+  background: linear-gradient(#00A1FF, #00A1FF); /* 标准的语法（必须放在最后） */
+}
+.range-picker {
+  :global {
+    .ant-form-item-control-wrapper {
+      min-width: 180px;
+    }
+  }
+}
+
+
+:global{
+  .ant-select-dropdown-menu::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+  }
+  .ant-select-dropdown-menu::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, .5);
+    background: rgb(54, 59, 62);
+  }
+  .ant-select-dropdown-menu::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    border-radius: 10px;
+    width:4px;
+    background: #cccccc;
+  }
+}

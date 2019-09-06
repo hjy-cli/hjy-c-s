@@ -1,0 +1,163 @@
+@import "../../../less/vendor-prefixes";
+@import "../../../less/variables";
+
+.container {
+  width: 100%;
+  @media screen and (max-width: 1920px) and (min-width: 1500px) {
+    height: 60vh;
+  }
+  @media screen and (max-width: 1500px) {
+    height: 74vh;
+  }
+  //height: calc(~'100vh - @{header} - @{filtrate-h} - @{base-margin}*3');
+  border-top: 5px solid @BtnBG;
+  //box-shadow: @base-shadow;
+  border-radius: @base-radius;
+  background-color: #ffffff;
+  overflow: hidden;
+  line-height: 40px;
+  position: relative;
+  :global {
+    .ant-input-disabled, .ant-input-number-disabled {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .ant-select-disabled {
+      border-radius: 4px;
+      background-color: #f5f5f5 !important;
+      color: #333;
+    }
+    .ant-select-disabled .ant-select-selection {
+      background-color: #f5f5f5 !important;
+    }
+    .ant-radio-disabled .ant-radio-inner {
+      background-color: #f5f5f5 !important;
+    }
+    .ant-checkbox-disabled .ant-checkbox-inner {
+      background-color: #f5f5f5 !important;
+    }
+    .ant-checkbox-disabled + span {
+      color: #333;
+    }
+    .ant-radio-disabled + span {
+      color: #333;
+    }
+  }
+}
+
+.containerHeader {
+  height: 40px;
+}
+
+// container组件按钮分割线
+.functionItem {
+  border-right: 1px solid #ccc;
+  padding-right: 6px;
+  cursor: pointer;
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.btnItem {
+  margin-left: 6px;
+  margin-right: 2px;
+  font-size: 14px;
+}
+
+.close {
+  margin-left: 6px;
+  margin-right: 2px;
+  font-size: 16px;
+  color: rgb(255, 41, 56);
+  float: right;
+}
+
+.exportLine {
+  height: 1px;
+  display: block;
+  width: 106%;
+  background: rgba(196, 196, 196, 1);
+  position: relative;
+  top: -7px;
+  border-right: 1px solid rgba(196, 196, 196, 1);
+}
+
+.line {
+  width: 1px;
+  margin-left: 10px;
+  border-right: 1px solid rgba(196, 196, 196, 1);
+}
+
+.title {
+  text-align: center;
+}
+
+.baseFont {
+  margin-left: 10px;
+  margin-right: 4px;
+  color: #000000;
+  font-size: 14px;
+}
+
+.modal {
+  top: 260px;
+  width: 405px !important;
+  :global {
+    .ant-modal-content {
+      width: 405px !important;
+      height: 230px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 6px;
+      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.8);
+      position: relative;
+      .ant-modal-body {
+        padding: 0;
+        padding-top: 120px;
+      }
+      .ant-modal-footer {
+        border-top: none;
+        text-align: center;
+      }
+      .ant-modal-footer button + button {
+        margin-left: 30px;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .back {
+    width: 136px;
+    height: 32px;
+    background: rgba(15, 164, 243, 1);
+    border-radius: 14px;
+    color: #ffffff;
+    border-color: rgba(15, 164, 243, 0.5);
+  }
+  .back:hover, .back:focus {
+    border-color: white;
+  }
+  .submit {
+    width: 136px;
+    height: 32px;
+    background: rgba(255, 99, 125, 1);
+    border-radius: 14px;
+    color: #ffffff;
+    //   border-color:rgba(255,99,125,0.5);
+  }
+  .submit:hover, .submit:focus {
+    border-color: white;
+  }
+
+  .delectImg {
+    width: 126px;
+    height: 126px;
+    background: url("../../../assets/delect.gif") center center no-repeat;
+    background-color: #ffffff;
+    border-radius: 50%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+    position: absolute;
+    top: -18px;
+    left: 138px;
+  }
+}
