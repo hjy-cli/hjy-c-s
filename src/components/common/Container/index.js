@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import {Icon, Dropdown, Upload, Menu, message, Popconfirm, Modal, Button} from 'antd';
+import {Dropdown, Upload, Menu, message, Popconfirm} from 'antd';
 import {connect} from 'dva';
-import MyIcon from '../MyIcon/index';
+import MyIcon from '../MyIcon';
 import styles from './index.less';
-import common from '../../../less/universal-css.css';
-import PublicService from "../../../services/PublicService";
 
 class Container extends Component {
   state = {
@@ -65,23 +63,6 @@ class Container extends Component {
     }
     this.props.dispatch({type: 'public/saveCompanies', payload: {tableHeight}});
   };
-
-  // 调用父组件相应方法
-  doFatherFunction(fatherFunction) {
-    let t = this;
-    t.props[fatherFunction]();
-  }
-
-  exportHandle(status) {
-    this.setState({
-      exportBoolean: true
-    });
-    this.props.exportBtn(status)
-  }
-
-  checkHandle(status) {
-    this.props.checkBtn(status)
-  }
 
   // 额外按钮的点击事件
   extraBtnClick(btnIndex) {
