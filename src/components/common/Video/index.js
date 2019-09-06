@@ -2,7 +2,7 @@
  * Created by GYL on 2019/1/22 Description: 百度视频插件
  */
 import React, {Component} from 'react';
-import cyberplayer from './cyberplayer.js';
+import cyberplayer from '../../../../public/cyberplayer.js';
 import videoConfig from './videoConfig';
 
 class Video extends Component {
