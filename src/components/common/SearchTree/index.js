@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Tree, Input} from 'antd';
 import styles from './index.less';
-import { isUndefined } from 'util';
 
 const TreeNode = Tree.TreeNode;
 const Search = Input.Search;
