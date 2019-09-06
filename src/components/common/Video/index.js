@@ -22,6 +22,7 @@ class Video extends Component {
     this.player = cyberplayer(this.ID).setup({
       ...videoConfig[videoType],
       ...t.props,
+      width: "100%",
       stretching: "exactfit", // 铺满
       controls: true,
       volume: 100,

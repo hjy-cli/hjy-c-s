@@ -1,18 +1,19 @@
 /**
- * Created by wupeng on 2017//9.
+ * Created by gyl on 2019/9/6
  */
 import React, {Component} from 'react';
-import {Menu, message, Icon} from 'antd';
-import {Link, hashHistory} from 'dva/router';
+import {Menu} from 'antd';
+import {Link} from 'dva/router';
 import {connect} from 'dva';
 import MyIcon from '../../components/common/MyIcon/index';
 import styles from './LeftNav.less';
+import PublicService from "../../services/PublicService";
 
 const SubMenu = Menu.SubMenu;
 let navSettings = [
   {
     title: '公共组件示例',
-    url: '/example',
+    url: 'example',
     key: '1',
   }, {
     title: '菜单二',
@@ -45,22 +46,11 @@ class LeftNav extends Component {
     let current = '';
     let openKeys = [];
     navSettings.map((item, index) => {
-      if (item.url && item.url === address) {
-        current = item.key;
-        openKeys.push(item.key)
+      let {key} = PublicService.onRecursion(item, "url", address);
+      if (key) {
+        current = key;
+        openKeys = [key];
       }
-      item.sub && item.sub.map((itemSub, index) => {
-        if (itemSub.url && itemSub.url === address) {
-          current = itemSub.key;
-          openKeys.push(item.key, itemSub.key)
-        }
-        itemSub.sub && itemSub.sub.map((itemSubSub, index) => {
-          if (itemSubSub.url && itemSubSub.url === address) {
-            current = itemSubSub.key;
-            openKeys.push(item.key, itemSub.key, itemSubSub.key)
-          }
-        })
-      })
     });
     this.setState({
       current,

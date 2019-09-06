@@ -3,21 +3,23 @@
  */
 import React, {Component} from 'react';
 import {message, Divider, Popconfirm, Icon} from 'antd';
-import moment from 'moment';
 import {connect} from 'dva';
+import config from '../../../config';
 import request from '../../../utils/request';
+import PublicService from "../../../services/PublicService";
+import Video from "../../../components/common/Video/index";
+import Shrink from "../../../components/common/Shrink/index";
+import MyTable from '../../../components/common/MyTable/index';
 import Filtrate from '../../../components/common/Filtrate/index';
 import Container from '../../../components/common/Container/index';
-import MyTable from '../../../components/common/MyTable/index';
-import MyPagination from '../../../components/common/MyPagination/index';
-import PublicService from "../../../services/PublicService";
+import SearchTree from "../../../components/common/SearchTree/index";
 import PublicModal from '../../../components/common/PublicModal/index';
-import config from '../../../config';
+import MyPagination from '../../../components/common/MyPagination/index';
 
 class Example extends Component {
   state = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: config.pageSize,
     total: 10,
     tableData: [],
     tableLoading: false,
@@ -31,11 +33,11 @@ class Example extends Component {
 
   componentDidMount() {
     // const t = this;
-    // t.onSearch(1, 10);
+    // t.onSearch();
   };
 
   // 查询
-  onSearch = (pageIndex, pageSize) => {
+  onSearch = (pageIndex = this.state.pageIndex, pageSize = this.state.pageSize) => {
     const t = this;
     let ret = t.f1.getForm().getFieldsValue();
     t.setState({
@@ -178,9 +180,11 @@ class Example extends Component {
               <Divider type="vertical"/>
               <a onClick={t.onModalShow.bind(t, "查看", record)}>查看</a>
               <Divider type="vertical"/>
-              <Popconfirm title="是否删除此条数据?" onConfirm={this.onDelete.bind(this, text)}
-                          icon={<Icon type="question-circle-o" style={{color: 'red'}}/>}>
-                <a>删除</a>
+              <Popconfirm
+                title="是否删除此条数据?"
+                onConfirm={t.onDelete.bind(t, text)}
+                icon={<Icon type="question-circle-o" style={{color: 'red'}}/>}>
+                  <a>删除</a>
               </Popconfirm>
             </span>
           )
@@ -209,7 +213,7 @@ class Example extends Component {
     let textList = [
       {text: '测试', value: '1'},
       {text: '测试', value: '2'},
-    ]
+    ];
 
     // 模态框配置项
     let disabled = modalType === "查看";
@@ -217,104 +221,79 @@ class Example extends Component {
       {
         span: 24,
         type: 'wrap',
-        content: <div style={{textAlign: 'center'}}>自定义模块</div>,
-      },
-      {
+        content: <div style={{textAlign: 'center'}}>自定义模块</div>
+      }, {
         type: 'title',
         content: "常用form元素"
-      },
-      {
+      }, {
         type: 'input',
         label: '输入框',
         paramName: 'name',
         rules: [{...config.reg.required}],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'inputNumber',
         label: '数值',
         paramName: 'inputNumber',
         disabled,
         rules: [{...config.reg.required}],
-        initialValue: null,
-      },
-      {
+      }, {
         type: 'select',
         label: '下拉选',
         paramName: 'type',
         options: textList,
         rules: [{...config.reg.required}],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'location',
         label: '经纬度',
         paramName: 'location',
         rules: [{...config.reg.required}],
         center: [],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'textArea',
         label: '多行文本',
         paramName: 'textArea',
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'rangePicker',
         label: '日期',
         paramName: 'rangePicker',
         rules: [{...config.reg.required}],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'datePicker',
         label: '时间',
         paramName: 'datePicker',
         rules: [{...config.reg.required}],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'yearPicker',
         label: '年份',
         paramName: 'yearPicker',
         rules: [{...config.reg.required}],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'monthPicker',
         label: '月份',
         paramName: 'monthPicker',
         rules: [{...config.reg.required}],
-        initialValue: null,
         disabled
-      },
-      {
+      }, {
         type: 'datePickerTime',
         label: '时间段',
         paramName: 'meetingDate',
         paramTimeName: 'meetingStartTime',
         paramTimeName2: 'meetingEndTime',
-        initialValue: null,
-        initialTimeValue: null,
-        initialTimeValue2: null,
-        disabled,
-      },
-      {
+        disabled
+      }, {
         type: 'radio',
         label: '单选',
         paramName: 'radio',
         initialValue: 1,
         options: testList.splice(0, 4)
-      },
-      {
+      }, {
         type: "checkBoxGroup",
         label: "多选 :",
         paramName: "checkBoxGroup",
@@ -324,78 +303,57 @@ class Example extends Component {
         labelCol: 8,
         wrapperCol: 16,
         options: testList
-      },
-      {
+      }, {
         type: 'imgUp',
         label: '图片',
         url: '/mizudacockpit/fm/uploadByForm',
         upLength: 1,
         disabled
-      },
-      {
+      }, {
         type: 'title',
         content: '文件列表',
         upShow: true,
         url: '/mizudameeting/commonFile/upload',
         disabled
-      },
-      {
+      }, {
         type: 'list',
         upList: [
           {orgName: "测试", uploadTime: "2017-03-28"},
         ],
         disabled
-      },
-      {
+      }, {
         type: 'title',
         content: "收缩组件"
-      },
-      {
-        type: "shrink",
-        span: 24,
-        handleChange: t.handleChange,
-        dataSource: testList,
-      },
-      {
+      }, {
+        type: "customWrap",
+        content: <Shrink handleChange={t.handleChange} dataSource={testList}/>
+      }, {
         type: 'title',
         content: "树与表格"
-      },
-      {
-        type: 'tree',
+      }, {
+        type: 'customWrap',
         label: '树',
         span: 6,
-        checkedList: checkedList,
-        getChecked: t.getChecked,
-        dataList: [
-          {
-            title: '测试',
-            value: '1',
-            key: '1',
-            children: [
-              {
-                title: '测试',
-                value: '2',
-                key: '1-1'
-              }
-            ]
-          }
-        ],
-      },
-      {
-        type: 'table',
+        content: (
+          <SearchTree
+            dataList={[{title: '测试', value: '1', key: '1', children: [{title: '测试', value: '2', key: '1-1'}]}]}
+            getChecked={t.getChecked}
+            checkedList={checkedList}
+            father={true}/>
+        ),
+      }, {
+        type: 'customWrap',
         label: '表格',
         span: 18,
-        columns: columns,
-        dataSource: dataList,
-        loading: false,
-      },
-      {
+        content: <MyTable columns={columns} dataSource={dataList} pagination={false}/>
+      }, {
         type: 'title',
         content: "视频组件"
       },
       {
-        type: 'video',
-        videoType: "RTMP"
+        type: 'customWrap',
+        span: 24,
+        content: <Video height={350}/>
       },
     ];
     return (
@@ -404,7 +362,7 @@ class Example extends Component {
           items={items}
           clearBtn={'hide'}
           ref={ref => this.f1 = ref}
-          submit={t.onSearch.bind(t, 1, 10)}
+          submit={t.onSearch.bind(t, 1, config.pageSize)}
         />
         <Container
           addBtnShow={true}

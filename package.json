@@ -14,7 +14,6 @@
     "babel-runtime": "^6.26.0",
     "blueimp-md5": "^2.10.0",
     "dva": "^1.2.1",
-    "echarts": "^4.0.1",
     "echarts-for-react": "^2.0.14",
     "es6-promise": "^4.2.2",
     "immutability-helper": "^2.6.3",
@@ -22,13 +21,8 @@
     "mockjs": "^1.0.1-beta3",
     "moment": "^2.20.1",
     "prop-types": "^15.6.0",
-    "rc-queue-anim": "^1.6.12",
     "react": "^15.4.0",
-    "react-amap": "^1.2.8",
-    "react-dnd": "^2.5.4",
-    "react-dnd-html5-backend": "^2.5.4",
-    "react-dom": "^15.4.0",
-    "react-player": "^1.11.0"
+    "react-dom": "^15.4.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",

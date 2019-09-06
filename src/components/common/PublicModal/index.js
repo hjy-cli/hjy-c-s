@@ -5,43 +5,17 @@ import React, {Component} from 'react';
 import {connect} from 'dva';
 import moment from 'moment'
 import {
-  Form,
-  Row,
-  Col,
-  Select,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  TimePicker,
-  Checkbox,
-  Tabs,
-  Upload,
-  DatePicker,
-  Radio,
-  Button,
-  Icon,
-  TreeSelect
+  Form, Row, Col, Select, Input, InputNumber, message, Modal, TimePicker, Checkbox, Upload, DatePicker, Radio, Button,
+  Icon, TreeSelect
 } from 'antd';
 import MyModal from '../MyModal/index';
-import SearchTree from '../SearchTree/index';
-import styles from './index.less';
-import config from '../../../config';
-import MyTable from "../MyTable/index";
 import Shrink from "../Shrink/index";
-import Video from "../Video/index";
+import styles from './index.less';
 
 const {RangePicker, MonthPicker} = DatePicker;
 const FormItem = Form.Item;
-const Option = Select.Option;
 const {TextArea} = Input;
 const RadioGroup = Radio.Group;
-const ButtonGroup = Button.Group;
-
-function disabledDate(current) {
-  // 当天以后时间禁选,组件传值   disabledDate:true
-  return current && current.valueOf() > Date.now();
-}
 
 class PublicModal extends Component {
   state = {
@@ -57,21 +31,28 @@ class PublicModal extends Component {
 
   componentDidMount() {
     let t = this;
-    if (t.props.upList && t.props.upList.length) {
+    let {upList, thumbnailFileIds, imgList} = t.props;
+
+    // 上传文件列表
+    if (upList && upList.length) {
       this.setState({
-        upList: t.props.upList,
+        upList,
       });
     }
-    if (t.props.thumbnailFileIds && t.props.thumbnailFileIds.length) {
-      let thumbnailFileIds = t.props.thumbnailFileIds.map(item => (item.id)).join(',');
+
+    // 预览文件列表
+    if (thumbnailFileIds && thumbnailFileIds.length) {
+      let thumbnailFileIds = thumbnailFileIds.map(item => (item.id)).join(',');
       this.setState({
         thumbnailFileIds
       })
     }
-    if (t.props.imgList && t.props.imgList.length) {
-      let imgId = t.props.imgList.map(item => (item.id)).join(',');
+
+    // 图片列表
+    if (imgList && imgList.length) {
+      let imgId = imgList.map(item => (item.id)).join(',');
       this.setState({
-        imgList: t.props.imgList,
+        imgList: imgList,
         imgId,
       });
     }
@@ -85,14 +66,7 @@ class PublicModal extends Component {
       }
     });
   };
-  // 上传前的钩子
-  imgOnChange = () => {
-    let {upList} = this.state;
-    if (upList.length >= 1) {
-      message.warning("超出上传条数限制");
-      return false;
-    }
-  };
+
   // 上传成功
   onSuccess = (info) => {
     if (info.rc !== 0) {
@@ -117,6 +91,7 @@ class PublicModal extends Component {
       upLoading: false
     })
   };
+
   // 删除附件
   onDelete = (index) => {
     let upList = [...this.state.upList];
@@ -129,9 +104,10 @@ class PublicModal extends Component {
       upList
     });
   };
+
   // 时间
   onDateChange = (type, value) => {
-    const {setFieldsValue, getFieldsValue} = this.props.form;
+    const {setFieldsValue} = this.props.form;
     setFieldsValue({
       [type]: moment(value)
     }, () => {
@@ -140,19 +116,28 @@ class PublicModal extends Component {
       });
     })
   };
+
   // 弹出日历和关闭日历的回调
   onOpenChange = (status) => {
     this.setState({
       openPicker: status
     });
   };
-  handleCancel = () => this.setState({previewVisible: false});
+
+  // 关闭预览模态框
+  handleCancel = () => {
+    this.setState({previewVisible: false})
+  };
+
+  // 打卡预览模态框
   handlePreview = (file) => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
       previewVisible: true,
     });
   };
+
+  // 图片上传
   handleChange = ({file, fileList}) => {
     if (file.status === "done") {
       if (file.response && file.response.rc === 0) {
@@ -160,8 +145,6 @@ class PublicModal extends Component {
         fileList[fileList.length - 1].id = file.response.ret.id;
         let idList = fileList.map(item => (item.id)).join(',');
         let thumbnailFileIds = fileList.map(item => (item.response.ret.thumbnailPicture)).join(',');
-        console.log("fileList:", fileList);
-        console.log("thumbnailFileIds:", thumbnailFileIds);
         this.setState({imgList: fileList, imgId: idList, thumbnailFileIds})
       } else {
         message.error("上传失败！");
@@ -171,54 +154,7 @@ class PublicModal extends Component {
       this.setState({imgList: fileList})
     }
   };
-  myUploadFn = (param) => {
-    const serverURL = '/mizudameeting/commonFile/upload';
-    const xhr = new XMLHttpRequest;
-    const fd = new FormData();
 
-    const successFn = (response) => {
-      // 假设服务端直接返回文件上传后的地址
-      // 上传成功后调用param.success并传入上传后的文件地址
-      let data = JSON.parse(xhr.responseText);
-      if (data.rc === 0 && data.ret) {
-        param.success({
-          url: config.imgUrl + data.ret.remoteRelativeUrl,
-          // meta: {
-          //   id: data.ret.id,
-          //   title: 'xxx',
-          //   alt: data.ret.orgName,
-          //   loop: true, // 指定音视频是否循环播放
-          //   autoPlay: true, // 指定音视频是否自动播放
-          //   controls: true, // 指定音视频是否显示控制栏
-          //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
-          // }
-        })
-      }
-
-    };
-
-    const progressFn = (event) => {
-      // 上传进度发生变化时调用param.progress
-      param.progress(event.loaded / event.total * 100)
-    };
-
-    const errorFn = (response) => {
-      // 上传发生错误时调用param.error
-      param.error({
-        msg: 'unable to upload.'
-      })
-    };
-
-    xhr.upload.addEventListener("progress", progressFn, false);
-    xhr.addEventListener("load", successFn, false);
-    xhr.addEventListener("error", errorFn, false);
-    xhr.addEventListener("abort", errorFn, false);
-
-    fd.append('file', param.file);
-    xhr.open('POST', serverURL, true);
-    xhr.send(fd);
-
-  };
   // 上传前
   beforeUpload = () => {
     this.setState({
@@ -255,7 +191,7 @@ class PublicModal extends Component {
           <Row gutter={12}>
             {
               items.map((item, index) => {
-                if (item.type === 'black') {
+                if (item.type === 'black') { // 自定义块容器可用于简单的文字显示或其他自定义内容
                   return (
                     <Col key={index} span={item.span || 8} offset={item.offset} style={item.style}>
                       {
@@ -265,7 +201,17 @@ class PublicModal extends Component {
                       }
                     </Col>
                   )
-                } else if (item.type === 'title') {
+                } else if (item.type === "customWrap") { // 自定义组件容器
+                  return (
+                    <Col key={index} span={item.span || 24} offset={item.offset} style={{marginBottom: 10}}>
+                      {
+                        item.label &&
+                        <div style={{marginBottom: 6}}>{item.label}</div>
+                      }
+                      {item.content}
+                    </Col>
+                  )
+                } else if (item.type === 'title') { // 标题带有上传功能
                   return (
                     <Col key={index} span={24}>
                       <div className={styles['wp-tab']}>
@@ -294,7 +240,30 @@ class PublicModal extends Component {
                       </div>
                     </Col>
                   )
-                } else if (item.type === 'shrink') {
+                } else if (item.type === 'list') { // 文件列表
+                  return (
+                    <Col key={index} span={24}>
+                      {
+                        upList && upList.length > 0 &&
+                        upList.map((option, subIndex) => (
+                          <Col key={subIndex} span={24} style={{marginBottom: 10}}>
+                            <Col span={9} style={{paddingLeft: 20}}>{option.fileName}</Col>
+                            <Col span={7}
+                                 style={{textAlign: 'center'}}>{option.createTime && moment(option.createTime).format("YYYY-MM-DD HH:mm:ss")}</Col>
+                            <Col span={8} style={{textAlign: 'right', paddingRight: 20}}>
+                              <Col offset={item.disabled ? 19 : 12} span={6}><a
+                                href={option.url}>下载</a></Col>
+                              {
+                                !item.disabled &&
+                                <Col span={6}><a onClick={item.onDelete.bind(t, subIndex)}>删除</a></Col>
+                              }
+                            </Col>
+                          </Col>
+                        ))
+                      }
+                    </Col>
+                  )
+                } else if (item.type === 'shrink') { // 收缩
                   return (
                     <Col key={index} span={item.span || 8} offset={item.offset}
                          style={{...item.style, borderBottom: '1px dashed #DDD', padding: '10px 0'}}>
@@ -308,50 +277,139 @@ class PublicModal extends Component {
                         dataSource={item.dataSource}/>
                     </Col>
                   )
-                } else if (item.type === 'rangePicker') {
+                } else if (item.type === 'inputNumber') { // 数字输入框
                   return (
-                    <Col key={index} span={item.span || col} offset={item.offset}>
+                    <Col key={index} span={item.span || col} offset={item.offset} style={item.style}
+                         className={item.className}>
                       <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                label={item.label} key={index}>
+                                label={item.label}>
                         {
                           getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue,
-                            rules: item.rules || null,
-                          })(
-                            <RangePicker
-                              showTime={item.showTime}
-                              style={{width: item.width}}
-                              format={item.format}
-                              onChange={item.onChange}
-                              disabledDate={item.disabledDate}
-                              disabled={item.disabled}
-                              ranges={item.ranges}
-                            />
-                          )
-                        }
-                      </FormItem>
-                    </Col>)
-                } else if (item.type === 'checkBoxGroup') {
-                  return (
-                    <Col key={index} span={item.span || col} offset={item.offset} style={item.style}>
-                      <FormItem className={styles.myTextArea} label={item.label} labelCol={{span: item.labelCol || 4}}
-                                wrapperCol={{span: item.wrapperCol || 20}}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue || [],
+                            initialValue: item.initialValue || "",
                             rules: item.rules || [],
                           })(
-                            <Checkbox.Group
-                              options={item.options}
+                            <InputNumber
+                              step={item.step || 1}
+                              max={item.max || 10000}
+                              min={item.min || 1}
+                              placeholder={item.placeholder || '请输入'}
                               disabled={item.disabled}
-                              style={{width: '100%'}}
                               onChange={item.onChange}/>
                           )
                         }
                       </FormItem>
                     </Col>
                   )
-                } else if (item.type === 'checkBox') {
+                } else if (item.type === 'textArea') { // 多行输入
+                  return (
+                    <Col key={index} span={item.span || 24} style={{marginBottom: 10}} offset={item.offset}>
+                      <FormItem className={styles.myTextArea} labelCol={{span: item.labelCol || 4}}
+                                wrapperCol={{span: item.wrapperCol || 20}} label={item.label}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: item.initialValue || "",
+                            rules: item.rules,
+                          })(
+                            <TextArea placeholder={item.placeholder || '请输入'} disabled={item.disabled}
+                                      autosize={{minRows: 2, maxRows: 2}}/>
+                          )
+                        }
+                      </FormItem>
+                    </Col>
+                  )
+                } else if (item.type === 'select') { // 下拉选
+                  return (
+                    <Col key={index} span={item.span || col} offset={item.offset}>
+                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
+                                key={item.paramName} label={item.label}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: item.initialValue,
+                            rules: item.rules || [],
+                          })(
+                            <Select
+                              showSearch
+                              optionFilterProp="children"
+                              disabled={item.disabled}
+                              mode={item.mode}
+                              onChange={item.onChange}
+                              placeholder={item.placeholder || '请选择'}>
+                              {
+                                item.options && item.options.length > 0 &&
+                                item.options.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
+                                      {option.text}
+                                    </Select.Option>
+                                  )
+                                )}
+                            </Select>
+                          )
+                        }
+                      </FormItem>
+                    </Col>
+                  )
+                } else if (item.type === 'treeSelect') { // 树下拉
+                  return (
+                    <Col key={index} span={item.span || col} offset={item.offset}>
+                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
+                                key={item.paramName} label={item.label}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: item.initialValue || '',
+                            rules: item.rules || []
+                          })(
+                            <TreeSelect
+                              onChange={item.onChange}
+                              disabled={item.disabled}
+                              treeData={item.options}
+                              treeCheckable={item.treeCheckable}
+                              onSelect={item.onSelect}
+                            />
+                          )}
+                      </FormItem>
+                    </Col>
+                  )
+                } else if (item.type === 'radio') { // 单选
+                  return (
+                    <Col key={index} span={item.span || col} offset={item.offset}>
+                      <FormItem className={item.className} labelCol={{span: item.labelCol || 8}}
+                                wrapperCol={{span: item.wrapperCol || 16}} label={item.label} colon={item.colon}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: (item.initialValue === false || item.initialValue === true) ? !!item.initialValue : null,
+                            rules: item.rules || [],
+                          })(
+                            <RadioGroup onChange={item.onChange} disabled={item.disabled} options={item.options}/>
+                          )
+                        }
+                      </FormItem>
+                    </Col>
+                  )
+                } else if (item.type === 'radioButton') { // 单选按钮组
+                  return (
+                    <Col key={index} span={item.span || col} offset={item.offset}>
+                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
+                                key={item.paramName} label={item.label}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: item.initialValue || '',
+                            rules: item.rules || []
+                          })(
+                            <Radio.Group buttonStyle="solid" disabled={item.disabled} onChange={item.onChange}>
+                              {
+                                item.options && item.options.length > 0 &&
+                                item.options.map(option => (
+                                    <Radio.Button key={option.value} value={option.value} onClick={item.onClick}>
+                                      {option.text}
+                                    </Radio.Button>
+                                  )
+                                )}
+                            </Radio.Group>
+                          )}
+                      </FormItem>
+                    </Col>
+                  )
+                } else if (item.type === 'checkBox') { // 多选
                   return (
                     <Col key={index} span={item.span || col} offset={item.offset} style={item.style}>
                       <FormItem labelCol={{span: item.labelCol || 0}} wrapperCol={{span: item.wrapperCol || 24}}
@@ -373,23 +431,71 @@ class PublicModal extends Component {
                       </FormItem>
                     </Col>
                   )
-                } else if (item.type === 'radio') {
+                } else if (item.type === 'checkBoxGroup') { // 多选按钮组
                   return (
-                    <Col key={index} span={item.span || col} offset={item.offset}>
-                      <FormItem className={item.className} labelCol={{span: item.labelCol || 8}}
-                                wrapperCol={{span: item.wrapperCol || 16}} label={item.label} colon={item.colon}>
+                    <Col key={index} span={item.span || col} offset={item.offset} style={item.style}>
+                      <FormItem className={styles.myTextArea} label={item.label} labelCol={{span: item.labelCol || 4}}
+                                wrapperCol={{span: item.wrapperCol || 20}}>
                         {
                           getFieldDecorator(item.paramName, {
-                            initialValue: (item.initialValue === false || item.initialValue === true) ? !!item.initialValue : null,
+                            initialValue: item.initialValue || [],
                             rules: item.rules || [],
                           })(
-                            <RadioGroup onChange={item.onChange} disabled={item.disabled} options={item.options}/>
+                            <Checkbox.Group
+                              options={item.options}
+                              disabled={item.disabled}
+                              style={{width: '100%'}}
+                              onChange={item.onChange}/>
                           )
                         }
                       </FormItem>
                     </Col>
                   )
-                } else if (item.type === 'datePickerTime') {
+                } else if (item.type === 'timePicker') { // 时分秒选择
+                  return (
+                    <Col key={index} span={item.span || col} offset={item.offset} className={item.className}>
+                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
+                                label={item.label} colon={item.colon}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: item.initialValue,
+                            rules: item.rules || null,
+                          })(
+                            <TimePicker
+                              hideDisabledOptions={item.hideDisabledOptions || true} // 将不可选的选项隐藏
+                              disabledHours={item.disabledHours}
+                              placeholder={item.placeholder || '请选择'}
+                              minuteStep={item.minuteStep}
+                              onChange={item.onChange}
+                              format={"HH:mm"}
+                              disabled={item.disabled}
+                              style={{width: '100%'}}/>
+                          )
+                        }
+                      </FormItem>
+                    </Col>)
+                } else if (item.type === 'datePicker') { // 日期选择
+                  return (
+                    <Col key={index} span={item.span || col} offset={item.offset}>
+                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
+                                label={item.label}>
+                        {
+                          getFieldDecorator(item.paramName, {
+                            initialValue: item.initialValue,
+                            rules: item.rules || null,
+                          })(
+                            <DatePicker
+                              onChange={item.onChange}
+                              showTime={item.showTime}
+                              format={item.format}
+                              disabledDate={item.disabledDate}
+                              disabled={item.disabled}
+                              style={{width: '100%'}}/>
+                          )
+                        }
+                      </FormItem>
+                    </Col>)
+                } else if (item.type === 'datePickerTime') { // 日期加时分秒
                   return (
                     <Col key={index} span={item.span || 24} offset={item.offset}>
                       <FormItem labelCol={{span: 4}} wrapperCol={{span: 20}} label={item.label}
@@ -431,30 +537,7 @@ class PublicModal extends Component {
                         </Col>
                       </FormItem>
                     </Col>)
-                } else if (item.type === 'timePicker') {
-                  return (
-                    <Col key={index} span={item.span || col} offset={item.offset} className={item.className}>
-                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                label={item.label} colon={item.colon}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue,
-                            rules: item.rules || null,
-                          })(
-                            <TimePicker
-                              hideDisabledOptions={item.hideDisabledOptions || true} // 将不可选的选项隐藏
-                              disabledHours={item.disabledHours}
-                              placeholder={item.placeholder || '请选择'}
-                              minuteStep={item.minuteStep}
-                              onChange={item.onChange}
-                              format={"HH:mm"}
-                              disabled={item.disabled}
-                              style={{width: '100%'}}/>
-                          )
-                        }
-                      </FormItem>
-                    </Col>)
-                } else if (item.type === 'datePicker') {
+                } else if (item.type === 'monthPicker') { // 月份选择
                   return (
                     <Col key={index} span={item.span || col} offset={item.offset}>
                       <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
@@ -464,18 +547,12 @@ class PublicModal extends Component {
                             initialValue: item.initialValue,
                             rules: item.rules || null,
                           })(
-                            <DatePicker
-                              onChange={item.onChange}
-                              showTime={item.showTime}
-                              format={item.format}
-                              disabledDate={item.disabledDate}
-                              disabled={item.disabled}
-                              style={{width: '100%'}}/>
+                            <MonthPicker onChange={item.onChange} disabled={item.disabled} style={{width: '100%'}}/>
                           )
                         }
                       </FormItem>
                     </Col>)
-                } else if (item.type === 'yearPicker') {
+                } else if (item.type === 'yearPicker') { // 年份选择
                   return (
                     <Col key={index} span={item.span || col} offset={item.offset}>
                       <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
@@ -492,45 +569,30 @@ class PublicModal extends Component {
                         }
                       </FormItem>
                     </Col>)
-                } else if (item.type === 'monthPicker') {
+                } else if (item.type === 'rangePicker') { // 时间段选择
                   return (
                     <Col key={index} span={item.span || col} offset={item.offset}>
                       <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                label={item.label}>
+                                label={item.label} key={index}>
                         {
                           getFieldDecorator(item.paramName, {
                             initialValue: item.initialValue,
                             rules: item.rules || null,
                           })(
-                            <MonthPicker onChange={item.onChange} disabled={item.disabled} style={{width: '100%'}}/>
+                            <RangePicker
+                              showTime={item.showTime}
+                              style={{width: item.width}}
+                              format={item.format}
+                              onChange={item.onChange}
+                              disabledDate={item.disabledDate}
+                              disabled={item.disabled}
+                              ranges={item.ranges}
+                            />
                           )
                         }
                       </FormItem>
                     </Col>)
-                } else if (item.type === 'inputNumber') {
-                  return (
-                    <Col key={index} span={item.span || col} offset={item.offset} style={item.style}
-                         className={item.className}>
-                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                label={item.label}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue || "",
-                            rules: item.rules || [],
-                          })(
-                            <InputNumber
-                              step={item.step || 1}
-                              max={item.max || 10000}
-                              min={item.min || 1}
-                              placeholder={item.placeholder || '请输入'}
-                              disabled={item.disabled}
-                              onChange={item.onChange}/>
-                          )
-                        }
-                      </FormItem>
-                    </Col>
-                  )
-                } else if (item.type === 'input') {
+                } else if (item.type === 'input') { // 输入框
                   return (
                     <Col key={index} span={item.span || col} offset={item.offset} style={item.style}>
                       <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
@@ -547,153 +609,7 @@ class PublicModal extends Component {
                       </FormItem>
                     </Col>
                   )
-                } else if (item.type === 'textArea') {
-                  return (
-                    <Col key={index} span={item.span || 24} style={{marginBottom: 10}} offset={item.offset}>
-                      <FormItem className={styles.myTextArea} labelCol={{span: item.labelCol || 4}}
-                                wrapperCol={{span: item.wrapperCol || 20}} label={item.label}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue || "",
-                            rules: item.rules,
-                          })(
-                            <TextArea placeholder={item.placeholder || '请输入'} disabled={item.disabled}
-                                      autosize={{minRows: 2, maxRows: 2}}/>
-                          )
-                        }
-                      </FormItem>
-                    </Col>
-                  )
-                } else if (item.type === 'list') {
-                  return (
-                    <Col key={index} span={24}>
-                      {
-                        upList && upList.length > 0 &&
-                        upList.map((option, subIndex) => (
-                          <Col key={subIndex} span={24} style={{marginBottom: 10}}>
-                            <Col span={8} style={{paddingLeft: 20}}>{option.orgName}</Col>
-                            <Col span={8} style={{textAlign: 'center'}}>{option.uploadTime}</Col>
-                            <Col span={8} style={{textAlign: 'right', paddingRight: 20}}>
-                              <Col offset={item.disabled ? 19 : 12} span={6}><a
-                                href={config.imgUrl + option.remoteRelativeUrl}>下载</a></Col>
-                              {
-                                !item.disabled &&
-                                <Col span={6}><a onClick={t.onDelete.bind(t, subIndex)}>删除</a></Col>
-                              }
-                            </Col>
-                          </Col>
-                        ))
-                      }
-                    </Col>
-                  )
-                } else if (item.type === 'treeSelect') {
-                  return (
-                    <Col key={index} span={item.span || col} offset={item.offset}>
-                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                key={item.paramName} label={item.label}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue || '',
-                            rules: item.rules || []
-                          })(
-                            <TreeSelect
-                              onChange={item.onChange}
-                              disabled={item.disabled}
-                              treeData={item.options}
-                              treeCheckable={item.treeCheckable}
-                              onSelect={item.onSelect}
-                            />
-                          )}
-                      </FormItem>
-                    </Col>
-                  )
-                } else if (item.type === 'radioButton') {
-                  return (
-                    <Col key={index} span={item.span || col} offset={item.offset}>
-                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                key={item.paramName} label={item.label}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue || '',
-                            rules: item.rules || []
-                          })(
-                            <Radio.Group buttonStyle="solid" disabled={item.disabled} onChange={item.onChange}>
-                              {
-                                item.options && item.options.length > 0 &&
-                                item.options.map(option => (
-                                    <Radio.Button key={option.value} value={option.value} onClick={item.onClick}>
-                                      {option.text}
-                                    </Radio.Button>
-                                  )
-                                )}
-                            </Radio.Group>
-                          )}
-                      </FormItem>
-                    </Col>
-                  )
-                } else if (item.type === 'select') {
-                  return (
-                    <Col key={index} span={item.span || col} offset={item.offset}>
-                      <FormItem labelCol={{span: item.labelCol || 8}} wrapperCol={{span: item.wrapperCol || 16}}
-                                key={item.paramName} label={item.label}>
-                        {
-                          getFieldDecorator(item.paramName, {
-                            initialValue: item.initialValue,
-                            rules: item.rules || [],
-                          })(
-                            <Select
-                              showSearch
-                              optionFilterProp="children"
-                              disabled={item.disabled}
-                              mode={item.mode}
-                              onChange={item.onChange}
-                              placeholder={item.placeholder || '请选择'}>
-                              {
-                                item.options && item.options.length > 0 &&
-                                item.options.map(option => (
-                                    <Option key={option.value} value={option.value}>
-                                      {option.text}
-                                    </Option>
-                                  )
-                                )}
-                            </Select>
-                          )
-                        }
-                      </FormItem>
-                    </Col>
-                  )
-                } else if (item.type === 'table') {
-                  return (
-                    <Col span={item.span || 24} key={index} offset={item.offset} style={{marginBottom: 10}}>
-                      {
-                        item.label &&
-                        <div style={{marginBottom: 6}}>{item.label}</div>
-                      }
-                      <MyTable
-                        loading={item.loading}
-                        key={item.tableKey || 'id'}
-                        columns={item.columns}
-                        hideY={item.hideY}
-                        dataSource={item.dataSource}
-                        rowSelection={item.rowSelection}
-                        scroll={item.scroll}
-                        pagination={false}
-                      />
-                    </Col>
-                  )
-                } else if (item.type === 'tree') {
-                  return (
-                    <Col span={item.span || 24} key={index}>
-                      <div style={{marginBottom: 6}}>{item.label} :</div>
-                      <SearchTree
-                        dataList={item.dataList}
-                        getChecked={item.getChecked}
-                        checkedList={item.checkedList}
-                        style={item.style}
-                        father={true}/>
-                    </Col>
-                  )
-                } else if (item.type === 'imgUp') {
+                } else if (item.type === 'imgUp') { // 图片上传带删除预览功能
                   return (
                     <Col span={item.span || 22} key={index} offset={2}>
                       <Col span={2} style={{marginBottom: 6}}>{item.label} :</Col>
@@ -715,17 +631,6 @@ class PublicModal extends Component {
                       <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
                         <img alt="example" style={{width: '100%'}} src={previewImage}/>
                       </Modal>
-                    </Col>
-                  )
-                } else if (item.type === 'video') {
-                  return (
-                    <Col span={item.span || 24} key={index} offset={item.offset}>
-                      <Video
-                        videoType={item.videoType}
-                        width={'100%'}
-                        height={item.height || 400}
-                        url={item.url}
-                      />
                     </Col>
                   )
                 }

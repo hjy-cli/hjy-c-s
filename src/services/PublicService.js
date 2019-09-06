@@ -34,6 +34,28 @@ export default class PublicService {
   }
 
   /**
+   * 指定键名递归过滤
+   * @param data 数据源
+   * @param key 键名
+   * @param value 值
+   * @returns {{}}返回符合条件的那一项
+   */
+  static onRecursion = (data, key, value) => {
+    let val = {};
+    let {children = [], sub = []} = data;
+    if (data && data[key] && data[key] === value) {
+      val = data;
+    }
+    let list = children || sub;
+    if (list && list.length) {
+      list.map(val => {
+        this.onRecursion(val, key, value)
+      });
+    }
+    return val;
+  };
+
+  /**
    * 时间格式化
    * @param text 时间戳
    * @param format 转换格式(默认为YYYY-MM-DD)
