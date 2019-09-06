@@ -3,6 +3,8 @@ import {Router, Route, IndexRoute,Switch} from 'dva/router';
 
 // 登录页
 import Login from "./routes/login/Login";
+
+// 主体
 import Main from "./routes/main/index";
 import Example from "./routes/main/Example";
 
